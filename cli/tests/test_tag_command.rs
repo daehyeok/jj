@@ -38,13 +38,13 @@ fn set_up_tagged_git_repo(git_repo: &git2::Repository) {
         .unwrap();
     git_repo.set_head("refs/heads/main").unwrap();
 
-    let obj = git_repo.revparse_single("HEAD").unwrap();
-    git_repo
-        .tag("test_tag", &obj, &signature, "test tag message", false)
-        .unwrap();
-    git_repo
-        .tag("test_tag2", &obj, &signature, "test tag message", false)
-        .unwrap();
+    git_repo.revparse_single("HEAD").unwrap();
+    // git_repo
+    //     .tag("test_tag", &obj, &signature, "test tag message", false)
+    //     .unwrap();
+    // git_repo
+    //     .tag("test_tag2", &obj, &signature, "test tag message", false)
+    //     .unwrap();
 }
 
 #[test]
@@ -59,6 +59,10 @@ fn test_tag_list() {
     test_env.jj_cmd_ok(test_env.env_root(), &["git", "clone", "source", "tagged"]);
 
     let local_path = test_env.env_root().join("tagged");
+
+    test_env.jj_cmd_success(&local_path, &["tag", "create", "test_tag", "-r", ""]);
+    test_env.jj_cmd_success(&local_path, &["tag", "create", "test_tag2"]);
+
     insta::assert_snapshot!(
         test_env.jj_cmd_success(&local_path, &["tag", "list"]),
         @r###"
